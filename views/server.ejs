@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>GlowstonePanel</title>
+	<link rel="stylesheet" type="text/css" href="css/estilos.css">
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+		crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+		crossorigin="anonymous">
+	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+</head>
+
+<body>
+	<header class="">
+		<nav class="">
+			<ul class="centrado">
+				<li><a href="index.php">Home</a></li>
+				<li><a href="#">My Server</a></li>
+				<li><a href="plugins.php">Files & Plugins</a></li>
+				<li><a href="#">Support</a></li>
+				<li class="welcome"><a href="#">Welcome, <p id="who" ></p> </a>
+					<ul>
+						<li><a href="logout.php">Logout</a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+		<div class="logotipo">
+			<img src="imagenes/logo.jpg" width="100" alt="">
+		</div>
+	</header>
+
+	<section class="main">
+		<section class="articles">
+			<article class="negro">
+				<h2 class="blanco amp centrado">My Server</h2>
+			</article>
+			<article>
+				<div>
+					<div>
+						<h3 class="izquierda">IP:</h3>
+						<p id="ip" class="derecha"></p>
+					</div>
+					<div>
+						<h3 id="status" class="izquierda">Status: </h3>
+						<p id="estado" class="derecha"></p>
+					</div>
+				</div>
+			</article>
+			<section>
+				<article class="queue" id="queue">
+					<hr>
+					<div class="izquierda">
+						<h3>You're in queue...</h3>
+						<p>This takes around 6 minutes</p>
+					</div>
+				</article>
+			</section>
+		</section>
+	</section>
+	<aside>
+		<article class="negro ">
+			<h2 class="blanco amp centrado">Server Control</h2>
+		</article>
+		<button id="iniciar" class="buttonIniciar"><i class="fa fa-cube"></i>Start the server</button>
+		<button id="parar" class="buttonApagar">Stop the server</button>
+	</aside>
+	<div>
+		<form class="centrado">
+			<input id="cc" class="ponerComando" type="text" placeholder="Type commands here..."></input>
+			<input type="submit" class="buttonEnviar"></input>
+		</form>
+	</div>
+	<section class="negro">
+		<div class="negro blanco">
+			<h2 class="centrado blanco amp optionsPanel">Server Options</h2>
+			<form class="chooseVersion">
+				<div class="col col-670 amp  blanco">
+					<select id="versionChooser">
+		  <option value="spigot10">Spigot 1.10</option>
+  		  <option value="spigot9">Spigot 1.9</option>
+  		  <option value="spigot8">Spigot 1.8</option>
+  		  <option value="vanilla10">Vanilla 1.10</option>
+		</select>
+					<input type="submit" class="buttonEnviar"></input>
+				</div>
+				<div class="col col-250 amp  blanco">
+
+				</div>
+			</form>
+		</div>
+	</section>
+	<footer>
+		<p class="blanco">@2017 GlowstonePanel</p>
+	</footer>
+
+	<script>
+		function checkCookie() {
+			var username = getCookie("username");
+			if (username == "") {
+				window.location.href = 'register';
+			}
+		}
+		checkCookie()
+		
+		var timeQueue = 360000; //6 minutos
+		window.onbeforeunload = function () {
+			if (timeOut != null) {
+				clearTimeout(timeOut);
+				document.getElementById("estado").innerHTML = "Offline";
+			}
+		};
+
+		var name = document.cookie;
+		document.getElementById("who").innerHTML = name;
+		var socket = io();
+		this.socket = io.connect('http://5.249.146.31:8080');
+		var ini = document.getElementById("iniciar");
+		var sto = document.getElementById("parar");
+		ini.onclick = function () {
+			socket.emit('start', name);
+			var timeOut = setTimeout(function () { socket.emit('finishCooldown', name); document.getElementById("queue").style.display = "none"; }, timeQueue);
+			document.getElementById("estado").innerHTML = "In Queue... (around 6 min)";
+			document.getElementById("queue").style.display = "block";
+		}
+		sto.onclick = function () {
+			socket.emit('parar', name);
+		}
+		socket.emit('estoy', name);
+		socket.on('estadoON', function () {
+			document.getElementById("estado").innerHTML = "Online";
+		});
+		socket.on('estadoOFF', function () {
+			document.getElementById("estado").innerHTML = "Offline";
+		});
+		$('form').submit(function () {
+			if (/\S/.test($('#cc').val())) {
+				socket.emit('command', name, $('#cc').val());
+				return false;
+			}
+		});
+		function setCookie(cname, cvalue, exdays) {
+			var d = new Date();
+			d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+			var expires = "expires=" + d.toUTCString();
+			document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+		}
+
+		function getCookie(cname) {
+			var name = cname + "=";
+			var ca = document.cookie.split(';');
+			for (var i = 0; i < ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0) == ' ') {
+					c = c.substring(1);
+				}
+				if (c.indexOf(name) == 0) {
+					return c.substring(name.length, c.length);
+				}
+			}
+			return "";
+		}
+	</script>
+
+</body>
+
+</html>
