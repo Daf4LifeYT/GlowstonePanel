@@ -7,106 +7,94 @@
 	<link rel="stylesheet" type="text/css" href="css/estilos.css">
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-		crossorigin="anonymous"></script>
+	 crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-		crossorigin="anonymous">
+	 crossorigin="anonymous">
 	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 </head>
 
+
 <body>
-	<header class="">
-		<nav class="">
-			<ul class="centrado">
-				<li><a href="index.php">Home</a></li>
-				<li><a href="#">My Server</a></li>
-				<li><a href="plugins.php">Files & Plugins</a></li>
-				<li><a href="#">Support</a></li>
-				<li class="welcome"><a href="#">Welcome, <p id="who" ></p> </a>
-					<ul>
-						<li><a href="logout.php">Logout</a></li>
+	<header>
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">GlowstonePanel</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li><a href="/">Home</a></li>
+						<li class="active"><a href="#">Server <span class="sr-only">(current)</span></a></li>
+						<li><a href="#">Files & Plugins</a></li>
 					</ul>
-				</li>
-			</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container-fluid -->
 		</nav>
-		<div class="logotipo">
-			<img src="imagenes/logo.jpg" width="100" alt="">
-		</div>
 	</header>
-
-	<section class="main">
-		<section class="articles">
-			<article class="negro">
-				<h2 class="blanco amp centrado">My Server</h2>
-			</article>
-			<article>
-				<div>
-					<div>
-						<h3 class="izquierda">IP:</h3>
-						<p id="ip" class="derecha"></p>
-					</div>
-					<div>
-						<h3 id="status" class="izquierda">Status: </h3>
-						<p id="estado" class="derecha"></p>
-					</div>
-				</div>
-			</article>
-			<section>
-				<article class="queue" id="queue">
-					<hr>
-					<div class="izquierda">
-						<h3>You're in queue...</h3>
-						<p>This takes around 6 minutes</p>
-					</div>
-				</article>
-			</section>
-		</section>
-	</section>
-	<aside>
-		<article class="negro ">
-			<h2 class="blanco amp centrado">Server Control</h2>
-		</article>
-		<button id="iniciar" class="buttonIniciar"><i class="fa fa-cube"></i>Start the server</button>
-		<button id="parar" class="buttonApagar">Stop the server</button>
-	</aside>
-	<div>
-		<form class="centrado">
-			<input id="cc" class="ponerComando" type="text" placeholder="Type commands here..."></input>
-			<input type="submit" class="buttonEnviar"></input>
-		</form>
+	<h1 class="text-center">My Server</h1>
+	<div class="col-md-6 col-md-offset-3">
+		<h2 class="text-center">Info</h2>
+		<div class="row">
+			<div class="col-sm-4">
+				<h3 class="izquierda">IP:</h3>
+			</div>
+			<div class="col-sm-4">
+				<p id="ip" class="derecha"></p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-4">
+				<h3 id="status">Status: </h3>
+			</div>
+			<div class="col-sm-4">
+				<p id="estado"></p>
+			</div>
+		</div>
 	</div>
-	<section class="negro">
-		<div class="negro blanco">
-			<h2 class="centrado blanco amp optionsPanel">Server Options</h2>
-			<form class="chooseVersion">
-				<div class="col col-670 amp  blanco">
-					<select id="versionChooser">
-		  <option value="spigot10">Spigot 1.10</option>
-  		  <option value="spigot9">Spigot 1.9</option>
-  		  <option value="spigot8">Spigot 1.8</option>
-  		  <option value="vanilla10">Vanilla 1.10</option>
-		</select>
-					<input type="submit" class="buttonEnviar"></input>
-				</div>
-				<div class="col col-250 amp  blanco">
-
+	<hr />
+	<div class="col-md-6 col-md-offset-3">
+		<h2 class="text-center">Server Control</h2>
+		<div class="row">
+			<div class="col-sm-4">
+				<button id="iniciar" class="btn btn-success">Start the server</button>
+			</div>
+			<div class="col-sm-4">
+				<button id="parar" class="btn btn-danger">Stop the server</button>
+			</div>
+		</div>
+		<hr />
+		<div>
+			<h2 class="text-center">Commands</h2>
+			<form class="centrado">
+				<div class="row">
+					<div class="form-group col-xs-6">
+						<input id="cc" class="form-control input-lg" type="text" placeholder="Type commands here..."></input>
+					</div>
+					<div class="form-group col-xs-6">
+						<button id="submit" class="btn btn-primary">Send</button>
+					</div>
 				</div>
 			</form>
 		</div>
-	</section>
+	</div>
 	<footer>
-		<p class="blanco">@2017 GlowstonePanel</p>
+		<p>@2017 GlowstonePanel</p>
 	</footer>
 
 	<script>
 		function checkCookie() {
 			var username = getCookie("username");
 			if (username == "") {
-				window.location.href = 'register';
+				window.location.href = 'login';
 			}
 		}
 		checkCookie()
-		
+
 		var timeQueue = 360000; //6 minutos
 		window.onbeforeunload = function () {
 			if (timeOut != null) {
