@@ -31,5 +31,8 @@ app.get('/login', function(req,res){
 app.get('/server', function(req,res){
     res.render('server');
 });
+app.get('/logout', function(req,res){
+    res.render('logout');
+});
 // Puerto 
 app.listen(port);

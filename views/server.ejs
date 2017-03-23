@@ -34,7 +34,7 @@
 						<li>
 							<a href="#" id="who"></a>
 						</li>
-						<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+						<li><a href="/"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
 					</ul>
 				</div>
 				<!-- /.navbar-collapse -->
@@ -122,9 +122,13 @@
 			document.getElementById("status").innerHTML = "Starting...";
 		}
 		stopButton.onclick = function () {
-			socket.emit('stop', name);
+			socket.emit('stopServer', name);
 		}
 		socket.emit('status', name);
+		socket.emit('getIP', name);
+		socket.on('ip', function (ip) {
+			document.getElementById("ip").innerHTML = ip;
+		});
 		socket.on('statusON', function () {
 			document.getElementById("status").innerHTML = "Online";
 		});

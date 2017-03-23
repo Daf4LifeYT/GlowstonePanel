@@ -1,15 +1,15 @@
 console.log("Starting...");
 var path = require('path');
-var jf = require('jsonfile'); //NPM INSTALL
 var proc = require('child_process');
+var configReader = require('./configReader')
 var filePathINI = path.join(__dirname, 'ini.json');
 var filePathOFF = path.join(__dirname, 'stop.json');
 var fs = require('fs');
 var mc_server = null;
-var HashMap = require('hashmap'); //NPM INSTALL
+var HashMap = require('hashmap');
 var map = new HashMap();
 
-var express = require('express'); //NPM INSTALL
+var express = require('express');
 //SOCKET IO NPM INSTALL
 var app = express();
 var serv = require('http').createServer(app);
@@ -34,7 +34,7 @@ io.sockets.on('connection', function (socket) {
         if (no == null) {
             var poth = path.join(__dirname, '/servers/' + name + "/");
             console.log("Starting server of " + name);
-            var mc_server2 = proc.exec("cd " + poth + "; java -Xmx300M -Xms300M -Dcom.mojang.eula.agree=true -jar server.jar", (error, stdout, stderr) => {
+            var mc_server2 = proc.exec("java -Xmx300M -Xms300M -Dcom.mojang.eula.agree=true -jar " + poth +  "server.jar", {cwd: poth },  (error, stdout, stderr) => {
                 if (error) {
                     console.log("The server of " + name + " was closed because: " + error)
                     socket.emit("statusOFF"); //status off
@@ -66,7 +66,10 @@ io.sockets.on('connection', function (socket) {
             }
         }
     });
-
+    socket.on('getIP', function(name) {
+        var ip = getIP(name);
+        socket.emit("ip", ip);
+    })
     socket.on('stopServer', function (name) {
         //Hashmap saves the variable name and the username
         var no = map.get(name);
@@ -75,7 +78,7 @@ io.sockets.on('connection', function (socket) {
             lelo.stdin.write("stop\r");
             map.remove(name);
             console.log("Closing server of " + name);
-            socket.emit("estadoOFF");
+            socket.emit("statusOFF");
         }
     });
     socket.on('stopAllServers', function () { //pararTodos means Stop All servers
@@ -127,4 +130,11 @@ function stopAllServers() {
         }
         count++;
     }
+}
+
+function getIP(name){
+    var ip = configReader.readConfig();
+    var port = configReader.readServerInfo(name);
+    var ipWithPort = ip.ip + ":" + port.port;
+    return ipWithPort;
 }
