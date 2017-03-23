@@ -8,6 +8,7 @@ var serv = require('http').createServer(app);
 //Initializing all the modules
 //var servercreation = require('./servercreation');
 var servercreator = require('./servercreator');
+var servercontrol = require('./servercontrol');
 //var plugins = require('./plugins');
 
 // Ficheros estaticos en localhost/...

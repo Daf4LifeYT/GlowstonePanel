@@ -30,6 +30,12 @@
 						<li class="active"><a href="#">Server <span class="sr-only">(current)</span></a></li>
 						<li><a href="#">Files & Plugins</a></li>
 					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a href="#" id="who"></a>
+						</li>
+						<li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+					</ul>
 				</div>
 				<!-- /.navbar-collapse -->
 			</div>
@@ -41,18 +47,18 @@
 		<h2 class="text-center">Info</h2>
 		<div class="row">
 			<div class="col-sm-4">
-				<h3 class="izquierda">IP:</h3>
+				<h3>IP:</h3>
 			</div>
 			<div class="col-sm-4">
-				<p id="ip" class="derecha"></p>
+				<h3 id="ip"></h3>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-4">
-				<h3 id="status">Status: </h3>
+				<h3>Status: </h3>
 			</div>
 			<div class="col-sm-4">
-				<p id="estado"></p>
+				<h3 id="status"></h3>
 			</div>
 		</div>
 	</div>
@@ -61,16 +67,16 @@
 		<h2 class="text-center">Server Control</h2>
 		<div class="row">
 			<div class="col-sm-4">
-				<button id="iniciar" class="btn btn-success">Start the server</button>
+				<button id="start" class="btn btn-success">Start the server</button>
 			</div>
 			<div class="col-sm-4">
-				<button id="parar" class="btn btn-danger">Stop the server</button>
+				<button id="stop" class="btn btn-danger">Stop the server</button>
 			</div>
 		</div>
 		<hr />
 		<div>
 			<h2 class="text-center">Commands</h2>
-			<form class="centrado">
+			<form onsubmit="return false">
 				<div class="row">
 					<div class="form-group col-xs-6">
 						<input id="cc" class="form-control input-lg" type="text" placeholder="Type commands here..."></input>
@@ -103,34 +109,33 @@
 			}
 		};
 
-		var name = document.cookie;
-		document.getElementById("who").innerHTML = name;
+		var cookieName = document.cookie;
+		var name = cookieName.slice(9);
+		document.getElementById("who").innerHTML = '<span class="glyphicon glyphicon-user"></span>' + name;
 		var socket = io();
-		this.socket = io.connect('http://5.249.146.31:8080');
-		var ini = document.getElementById("iniciar");
-		var sto = document.getElementById("parar");
-		ini.onclick = function () {
-			socket.emit('start', name);
-			var timeOut = setTimeout(function () { socket.emit('finishCooldown', name); document.getElementById("queue").style.display = "none"; }, timeQueue);
-			document.getElementById("estado").innerHTML = "In Queue... (around 6 min)";
-			document.getElementById("queue").style.display = "block";
+		this.socket = io.connect('http://localhost:8080');
+		var startButton = document.getElementById("start");
+		var stopButton = document.getElementById("stop");
+		var submit = document.getElementById("submit");
+		startButton.onclick = function () {
+			socket.emit('startServer', name);
+			document.getElementById("status").innerHTML = "Starting...";
 		}
-		sto.onclick = function () {
-			socket.emit('parar', name);
+		stopButton.onclick = function () {
+			socket.emit('stop', name);
 		}
-		socket.emit('estoy', name);
-		socket.on('estadoON', function () {
-			document.getElementById("estado").innerHTML = "Online";
+		socket.emit('status', name);
+		socket.on('statusON', function () {
+			document.getElementById("status").innerHTML = "Online";
 		});
-		socket.on('estadoOFF', function () {
-			document.getElementById("estado").innerHTML = "Offline";
+		socket.on('statusOFF', function () {
+			document.getElementById("status").innerHTML = "Offline";
 		});
-		$('form').submit(function () {
-			if (/\S/.test($('#cc').val())) {
-				socket.emit('command', name, $('#cc').val());
-				return false;
-			}
-		});
+		submit.onclick = function () {
+			console.log("epic")
+			var cc = document.getElementById("cc").value;
+			socket.emit('command', cc);
+		}
 		function setCookie(cname, cvalue, exdays) {
 			var d = new Date();
 			d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));

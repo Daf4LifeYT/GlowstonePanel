@@ -1,7 +1,7 @@
 {
   "name": "glowstoneserver",
   "version": "0.0.1",
-  "description": "A Free Hosting Panel",
+  "description": "A Free Minecraft Hosting Panel",
   "main": "main.js",
   "dependencies": {
     "copy": "^0.3.0",
@@ -9,7 +9,8 @@
     "express": "^4.15.2",
     "jsonfile": "^2.4.0",
     "mysql": "^2.13.0",
-    "socketio": "^1.0.0"
+    "socketio": "^1.0.0",
+    "hashmap":"^2.0.6"
   },
   "devDependencies": {},
   "scripts": {
