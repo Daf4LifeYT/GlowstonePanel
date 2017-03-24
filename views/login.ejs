@@ -55,7 +55,7 @@
 					</div>
 					<button id="submit" class="btn btn-default">Submit</button>
 				</form>
-				<a href="register">Don't have an account? Create one</a>
+				<a id="register" href="register">Don't have an account? Create one</a>
 			</div>
 		</div>
 	</div>
@@ -68,6 +68,7 @@
 	this.socket = io.connect('http://localhost:8081');
 	var submit = document.getElementById("submit");
 	var username;
+	socket.emit('isRegisterOpened');
 	submit.onclick = function () {
 		console.log("epic")
 		username = document.getElementById("username").value;
@@ -77,6 +78,12 @@
 	socket.on('loginSucess', function () {
 		setCookie("username", username, 2)
 		window.location.href = 'server';
+	});
+	socket.on('isRegisterOpened', function (registerBoolean) {
+		if (registerBoolean == false){
+   			var register = document.getElementById('register');
+    		register.parentNode.removeChild(register);
+		}
 	});
 	function setCookie(cname, cvalue, exdays) {
 		var d = new Date();

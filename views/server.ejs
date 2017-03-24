@@ -34,7 +34,7 @@
 						<li>
 							<a href="#" id="who"></a>
 						</li>
-						<li><a href="/"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+						<li><a href="logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
 					</ul>
 				</div>
 				<!-- /.navbar-collapse -->
@@ -138,7 +138,8 @@
 		submit.onclick = function () {
 			console.log("epic")
 			var cc = document.getElementById("cc").value;
-			socket.emit('command', cc);
+			socket.emit('command', name, cc);
+			document.getElementById("cc").value = "";
 		}
 		function setCookie(cname, cvalue, exdays) {
 			var d = new Date();

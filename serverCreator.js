@@ -6,6 +6,7 @@ var copy = require('copy');
 var app = express();
 var serv = require('http').createServer(app);
 var mysql = require('mysql');
+var configReader = require('./configReader')
 //var db = require('./db.js');
 var startQueue = {};
 
@@ -81,6 +82,10 @@ io.sockets.on('connection', function (socket) {
                 connection.end();
             }
         });
+    });
+    socket.on('isRegisterOpened', function () {
+        var config = configReader.readConfig();
+        socket.emit('isRegisterOpened', config.enableRegister)
     });
 });
 function createServer(username) {

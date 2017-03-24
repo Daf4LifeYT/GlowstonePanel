@@ -1,3 +1,4 @@
 {
-    "ip": 123
+    "ip": 123,
+    "enableRegister": false
 }

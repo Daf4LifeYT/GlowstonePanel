@@ -135,6 +135,6 @@ function stopAllServers() {
 function getIP(name){
     var ip = configReader.readConfig();
     var port = configReader.readServerInfo(name);
-    var ipWithPort = ip.ip + ":" + port.port;
+    var ipWithPort = ip.ip + ":" + (port.port - 1);
     return ipWithPort;
 }

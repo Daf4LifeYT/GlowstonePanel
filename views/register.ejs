@@ -73,5 +73,11 @@
 		var password = document.getElementById("pwd").value
 		socket.emit('register', username, email, password);
 	}
+	socket.emit('isRegisterOpened');
+	socket.on('isRegisterOpened', function (registerBoolean) {
+		if (registerBoolean == false){
+			document.write("Registration is disabled in this website");
+		}
+	});
 
 </script>
