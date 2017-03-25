@@ -1,4 +1,6 @@
 # Glowstone Panel
+[![NPM version](https://img.shields.io/npm/v/glowstoneserver.svg)](https://www.npmjs.com/package/glowstoneserver)
+[![NPM Downloads](https://img.shields.io/npm/dt/glowstoneserver.svg)](https://www.npmjs.com/package/glowstoneserver)
 This is a free Minecraft Server Hosting Control Panel. Don't want to buy Multicraft? Bored of other free panels? Then try this!
 
 ## FEATURES
