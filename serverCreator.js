@@ -58,57 +58,118 @@ io.sockets.on('connection', function (socket) {
     });
 });
 function createServer(username) {
-    var serverInfoFile = 'serverInfo.json'
-    jf.readFile(serverInfoFile, function (err, currentServerInfo) {
-        var serverInfo = currentServerInfo;
-        var port = serverInfo.port;
-        serverInfo.port = port + 1;
-        jf.writeFile(serverInfoFile, serverInfo, function (err) {
-            var properties = "#Minecraft server properties \n" +
-                "#Thu Mar 23 20:49:11 CET 2017 \n" +
-                "generator-settings= \n" +
-                "force-gamemode=false \n" +
-                "allow-nether=true \n" +
-                "gamemode=0 \n" +
-                "enable-query=false \n" +
-                "player-idle-timeout=0 \n" +
-                "difficulty=1 \n" +
-                "spawn - monsters=true \n" +
-                "op-permission-level=4 \n" +
-                "announce-player-achievements=true \n" +
-                "pvp=true \n" +
-                "snooper-enabled=true \n" +
-                "level-type=DEFAULT \n" +
-                "hardcore=false \n" +
-                "enable-command-block=false \n" +
-                "max-players=20 \n" +
-                "network-compression-threshold=256 \n" +
-                "resource-pack-sha1= \n" +
-                "max-world-size=29999984 \n" +
-                'server-port=' + port + "\n" +
-                "debug=false \n" +
-                "server-ip= \n" +
-                "spawn-npcs=true";
+    if (!fs.existsSync("serverInfo.json")) {
+        var serverInfoComplete = {
+            port: 25590
+        }
+        jf.writeFile("serverInfo.json", serverInfoComplete, function (err) {
+            var serverInfoFile = 'serverInfo.json'
+            jf.readFile(serverInfoFile, function (err, currentServerInfo) {
+                var serverInfo = currentServerInfo;
+                var port = serverInfo.port;
+                serverInfo.port = port + 1;
+                jf.writeFile(serverInfoFile, serverInfo, function (err) {
+                    var properties = "#Minecraft server properties \n" +
+                        "#Thu Mar 23 20:49:11 CET 2017 \n" +
+                        "generator-settings= \n" +
+                        "force-gamemode=false \n" +
+                        "allow-nether=true \n" +
+                        "gamemode=0 \n" +
+                        "enable-query=false \n" +
+                        "player-idle-timeout=0 \n" +
+                        "difficulty=1 \n" +
+                        "spawn - monsters=true \n" +
+                        "op-permission-level=4 \n" +
+                        "announce-player-achievements=true \n" +
+                        "pvp=true \n" +
+                        "snooper-enabled=true \n" +
+                        "level-type=DEFAULT \n" +
+                        "hardcore=false \n" +
+                        "enable-command-block=false \n" +
+                        "max-players=20 \n" +
+                        "network-compression-threshold=256 \n" +
+                        "resource-pack-sha1= \n" +
+                        "max-world-size=29999984 \n" +
+                        'server-port=' + port + "\n" +
+                        "debug=false \n" +
+                        "server-ip= \n" +
+                        "spawn-npcs=true";
 
-            fs.writeFile("server.properties", properties, function (err) {
-                if (err) {
-                    return console.log(err);
-                }
-                var dir = "./servers/" + username;
-                if (!fs.existsSync(dir)) {
-                    fs.mkdirSync(dir);
-                    //Copying all the files to the user server folder
-                    var serverFolder = path.join(__dirname, '/servers/' + username);
-                    copy('server.jar', serverFolder, function (err, file) {
+                    fs.writeFile("server.properties", properties, function (err) {
+                        if (err) {
+                            return console.log(err);
+                        }
+                        var dir = "./servers/" + username;
+                        if (!fs.existsSync(dir)) {
+                            fs.mkdirSync(dir);
+                            //Copying all the files to the user server folder
+                            var serverFolder = path.join(__dirname, '/servers/' + username);
+                            copy('server.jar', serverFolder, function (err, file) {
+                            });
+                            copy('server.properties', serverFolder, function (err, file) {
+                            });
+                            copy('serverInfo.json', serverFolder, function (err, file) {
+                            });
+                            //Delete the generated server.properties
+                            fs.unlinkSync("server.properties");
+                        }
                     });
-                    copy('server.properties', serverFolder, function (err, file) {
-                    });
-                    copy('serverInfo.json', serverFolder, function (err, file) {
-                    });
-                    //Delete the generated server.properties
-                    fs.unlinkSync("server.properties");
-                }
-            });
+                })
+            })
+        });
+    } else {
+        var serverInfoFile = 'serverInfo.json'
+        jf.readFile(serverInfoFile, function (err, currentServerInfo) {
+            var serverInfo = currentServerInfo;
+            var port = serverInfo.port;
+            serverInfo.port = port + 1;
+            jf.writeFile(serverInfoFile, serverInfo, function (err) {
+                var properties = "#Minecraft server properties \n" +
+                    "#Thu Mar 23 20:49:11 CET 2017 \n" +
+                    "generator-settings= \n" +
+                    "force-gamemode=false \n" +
+                    "allow-nether=true \n" +
+                    "gamemode=0 \n" +
+                    "enable-query=false \n" +
+                    "player-idle-timeout=0 \n" +
+                    "difficulty=1 \n" +
+                    "spawn - monsters=true \n" +
+                    "op-permission-level=4 \n" +
+                    "announce-player-achievements=true \n" +
+                    "pvp=true \n" +
+                    "snooper-enabled=true \n" +
+                    "level-type=DEFAULT \n" +
+                    "hardcore=false \n" +
+                    "enable-command-block=false \n" +
+                    "max-players=20 \n" +
+                    "network-compression-threshold=256 \n" +
+                    "resource-pack-sha1= \n" +
+                    "max-world-size=29999984 \n" +
+                    'server-port=' + port + "\n" +
+                    "debug=false \n" +
+                    "server-ip= \n" +
+                    "spawn-npcs=true";
+
+                fs.writeFile("server.properties", properties, function (err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    var dir = "./servers/" + username;
+                    if (!fs.existsSync(dir)) {
+                        fs.mkdirSync(dir);
+                        //Copying all the files to the user server folder
+                        var serverFolder = path.join(__dirname, '/servers/' + username);
+                        copy('server.jar', serverFolder, function (err, file) {
+                        });
+                        copy('server.properties', serverFolder, function (err, file) {
+                        });
+                        copy('serverInfo.json', serverFolder, function (err, file) {
+                        });
+                        //Delete the generated server.properties
+                        fs.unlinkSync("server.properties");
+                    }
+                });
+            })
         })
-    })
+    }
 }
