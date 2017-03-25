@@ -7,6 +7,7 @@ var app = express();
 var serv = require('http').createServer(app);
 var mysql = require('mysql');
 var configReader = require('./configReader')
+var userManager = require('./userManager')
 //var db = require('./db.js');
 var startQueue = {};
 
@@ -33,53 +34,21 @@ connection.end();
 var io = require('socket.io')(serv, {});
 io.sockets.on('connection', function (socket) {
     socket.on('register', function (username, email, password) {
-        var connection = mysql.createConnection(mysqlSettings);
-        connection.connect();
-        connection.query("SELECT * FROM `users` WHERE username='" + username + "'", function (err, rows, fields) {
-            if (!err) {
-                if (rows == 0) {
-                    connection.query("INSERT into `users` (username, password, email) VALUES ('" + username + "', '" + password + "', '" + email + "')", function (err, rows, fields) {
-                        if (!err) {
-                            var registered = true;
-                            socket.emit("register", registered)
-                            console.log('New user registered');
-                            createServer(username);
-                            connection.end();
-                        } else {
-                            var registered = false;
-                            socket.emit("register", registered)
-                            console.log('Error while performing Query: ' + err);
-                            connection.end();
-                        }
-                    });
-                } else {
-                    //There is already one user with that username
-                    connection.end();
-                }
+        userManager.register(username, email, password, function (allFine) {
+            if (allFine == true) {
+                socket.emit("register", true)
+                createServer(username)
             } else {
-                console.log('Error while performing Query: ' + err);
-                connection.end();
+                socket.emit("register", false)
             }
-        });
+        })
     });
     socket.on('login', function (username, password) {
-        var connection = mysql.createConnection(mysqlSettings);
-        connection.connect();
-        connection.query("SELECT * FROM `users` WHERE username='" + username + "' and password='" + password + "'", function (err, rows, fields) {
-            if (!err) {
-                //If password is correct...
-                if (rows.length > 0) {
-                    //All is correct
-                    socket.emit("loginSucess");
-                    connection.end();
-                } else {
-                    //Password is incorrect
-                    socket.emit("loginFail");
-                    connection.end();
-                }
+        userManager.login(username, password, function (allFine) {
+            if (allFine == true) {
+                socket.emit("loginSucess");
             } else {
-                console.log('Error while performing Query: ' + err);
-                connection.end();
+                socket.emit("loginFail");
             }
         });
     });
@@ -97,29 +66,29 @@ function createServer(username) {
         jf.writeFile(serverInfoFile, serverInfo, function (err) {
             var properties = "#Minecraft server properties \n" +
                 "#Thu Mar 23 20:49:11 CET 2017 \n" +
-                "generator-settings= \n" +                 
+                "generator-settings= \n" +
                 "force-gamemode=false \n" +
                 "allow-nether=true \n" +
                 "gamemode=0 \n" +
-                "enable-query=false \n" + 
-                "player-idle-timeout=0 \n" + 
-                "difficulty=1 \n" + 
-                "spawn - monsters=true \n" + 
+                "enable-query=false \n" +
+                "player-idle-timeout=0 \n" +
+                "difficulty=1 \n" +
+                "spawn - monsters=true \n" +
                 "op-permission-level=4 \n" +
                 "announce-player-achievements=true \n" +
-                "pvp=true \n" + 
-                "snooper-enabled=true \n" +  
-                "level-type=DEFAULT \n" + 
-                 "hardcore=false \n" + 
-                 "enable-command-block=false \n" +
-                 "max-players=20 \n" + 
-                 "network-compression-threshold=256 \n" +  
-                 "resource-pack-sha1= \n" + 
-                 "max-world-size=29999984 \n" + 
-                 'server-port=' + port + "\n" +
-                  "debug=false \n" + 
-                  "server-ip= \n" + 
-                  "spawn-npcs=true";
+                "pvp=true \n" +
+                "snooper-enabled=true \n" +
+                "level-type=DEFAULT \n" +
+                "hardcore=false \n" +
+                "enable-command-block=false \n" +
+                "max-players=20 \n" +
+                "network-compression-threshold=256 \n" +
+                "resource-pack-sha1= \n" +
+                "max-world-size=29999984 \n" +
+                'server-port=' + port + "\n" +
+                "debug=false \n" +
+                "server-ip= \n" +
+                "spawn-npcs=true";
 
             fs.writeFile("server.properties", properties, function (err) {
                 if (err) {
